@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#0e1321;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary": "#003918", "primary-fixed": "#7df4ff", "on-error-container": "#ffdad6", "on-primary-fixed": "#002022", "surface-container": "#1a1f2e", "on-error": "#690005", "on-tertiary-fixed": "#00210b", "on-background": "#dde2f6", "primary-fixed-dim": "#00dbe9", "surface-container-lowest": "#080e1c", "on-surface": "#dde2f6", "primary": "#dbfcff", "tertiary-container": "#34f885", "surface": "#0e1321", "surface-container-low": "#161b2a", "error-container": "#93000a", "on-primary-fixed-variant": "#004f54", "tertiary-fixed": "#62ff96", "secondary-fixed-dim": "#deb7ff", "on-surface-variant": "#b9cacb", "surface-variant": "#2f3444", "outline-variant": "#3b494b", "outline": "#849495", "on-secondary": "#4a007f", "on-secondary-fixed": "#2d0050", "error": "#ffb4ab", "on-primary-container": "#006970", "secondary-fixed": "#f1dbff", "surface-dim": "#0e1321", "inverse-primary": "#006970", "surface-bright": "#343949", "inverse-on-surface": "#2b3040", "on-secondary-container": "#d4a5ff", "tertiary": "#dbffde", "on-primary": "#00363a", "surface-tint": "#00dbe9", "surface-container-high": "#242a39", "tertiary-fixed-dim": "#00e475", "background": "#0e1321", "secondary-container": "#6b13af", "on-tertiary-fixed-variant": "#005226", "on-tertiary-container": "#006e35", "on-secondary-fixed-variant": "#680eac", "primary-container": "#00f0ff", "surface-container-highest": "#2f3444", "inverse-surface": "#dde2f6", "secondary": "#deb7ff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-lg": "1.5rem", "margin-mobile": "0.75rem", "gutter-sm": "0.5rem", "space-xs": "0.25rem", "space-xl": "2rem", "margin": "1.5rem", "gutter": "1rem", "space-md": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "telemetry-readout": [ "JetBrains Mono" ], "label-md": [ "JetBrains Mono" ], "label-sm": [ "JetBrains Mono" ], "body-sm": [ "JetBrains Mono" ], "headline-md": [ "Inter" ], "headline-xl": [ "Inter" ], "headline-xl-mobile": [ "Inter" ], "body-lg": [ "JetBrains Mono" ], "headline-lg": [ "Inter" ], "headline-sm": [ "Inter" ], "body-md": [ "JetBrains Mono" ] }, "fontSize": { "telemetry-readout": [ "22px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" } ], "label-sm": [ "10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" } ], "body-sm": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "400" } ], "headline-md": [ "20px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600" } ], "headline-xl": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-xl-mobile": [ "30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "body-lg": [ "15px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-sm": [ "16px", { "lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "body-md": [ "13px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)]"><div class="h-28 px-margin-mobile flex flex-col justify-between py-space-xs"><div class="flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs"><img alt="ORBITRA Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VolPB5z33qfrCyskSPHhZzHoOoUpeKSdzjdo5WzDDmFGTJPaez_niKjaqqFPKnwtZIY1gGyO46m0zQXk7UOEKBaHmgqsqN6fVAMczOjJKf-gdqS08tAhd5njCbVo3R4aBUx7EDo-2ftUPkjP791LltawNBQSFnzEmV7UgT1WnGxXWVeIqyrn1aM1cwbjIzGVy0tSuybP7gxVMlYJdCoSicH0QyxicfFNKxuA2aV2cRaKKSXGGLmQa3rYMm"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary-container tracking-wider uppercase font-bold">ORBITRA</span><span class="font-label-sm text-label-sm text-primary bg-primary/10 px-1 py-0.5 rounded-sm">GS-01</span></div><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">COSMIC ERA • MMMUT</span></div></div><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface uppercase truncate max-w-[100px]">Telemetry Overview</span><button aria-label="Emergency RF Kill" class="w-11 h-11 rounded-lg bg-error-container/40 text-error flex items-center justify-center hover:bg-error-container transition-colors"><span class="material-symbols-outlined text-[20px]">e911_emergency</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="flex items-center justify-between gap-space-xs bg-surface-container-low/60 rounded-lg px-space-xs py-1 overflow-x-auto"><div class="flex items-center gap-space-xs shrink-0"><div class="flex items-center gap-1 bg-tertiary/10 px-2 py-0.5 rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim animate-pulse"></span><span class="font-label-sm text-label-sm text-tertiary-fixed-dim">CONNECTED</span></div><button class="flex items-center gap-0.5 bg-surface-container px-2 py-0.5 rounded text-on-surface-variant hover:text-primary transition-colors"><span class="font-label-sm text-label-sm text-outline">MODE:</span><span class="font-label-sm text-label-sm text-primary font-semibold">LIVE</span></button></div><div class="flex items-center gap-space-xs shrink-0"><div class="flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant"><span class="font-label-sm text-label-sm text-outline">PKT:</span><span class="font-label-md text-label-md text-primary-container font-semibold">14,892</span></div><button class="flex items-center gap-1 bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface"><span class="font-label-sm text-label-sm text-outline">BAUD:</span><span class="font-label-sm text-label-sm text-on-surface font-semibold">115.2K</span><span class="material-symbols-outlined text-[12px]">arrow_drop_down</span></button></div></div></div></header><main class="flex flex-col relative w-full pt-28 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin-mobile py-space-sm gap-space-sm">
+<!-- Mission ID & Orbit Status Banner -->
+<div class="bg-surface-container-low rounded-xl p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">satellite_alt</span>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">COSMIC-1 (ORBITRA-2026)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">MMMUT AVIONICS LAB • GORAKHPUR</span>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-tertiary-container/15 px-2 py-1 rounded-full shrink-0">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed font-semibold">NOMINAL ORBIT (LEO)</span>
+</div>
+</div>
+<!-- Live Port / WebSerial HUD Control Bar -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col gap-space-xs mt-0.5">
+<div class="flex items-center justify-between gap-space-xs flex-wrap">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-outline text-[16px]">usb</span>
+<span class="font-body-sm text-body-sm text-primary truncate">/dev/ttyUSB0</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(ESP32 GS)</span>
+</div>
+<!-- Mode Toggle & Connect -->
+<div class="flex items-center gap-space-xs shrink-0">
+<div class="flex bg-surface-container-lowest p-0.5 rounded-lg">
+<button class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container text-on-primary-fixed font-semibold transition-all" id="mode-live">LIVE HARDWARE</button>
+<button class="font-label-sm text-label-sm px-2 py-0.5 rounded text-on-surface-variant hover:text-primary transition-all" id="mode-sim">DEMO SIM</button>
+</div>
+<button class="flex items-center gap-1 bg-primary-container text-on-primary-fixed px-2.5 py-1 rounded-lg font-label-md text-label-md font-semibold hover:brightness-110 active:scale-95 transition-all shadow-[0_0_10px_rgba(0,240,255,0.3)]" id="serial-connect-btn">
+<span class="material-symbols-outlined text-[14px]">sensors</span>
+<span id="serial-btn-text">CONNECT</span>
+</button>
+</div>
+</div>
+<!-- Telemetry Stats Micro Pills -->
+<div class="grid grid-cols-5 gap-1 pt-1 text-center">
+<div class="bg-surface-container-lowest/80 rounded py-1 px-0.5">
+<span class="font-label-sm text-label-sm text-outline block">PKTS</span>
+<span class="font-label-md text-label-md text-primary font-semibold" id="stat-pkt">1,048</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded py-1 px-0.5">
+<span class="font-label-sm text-label-sm text-outline block">DROP</span>
+<span class="font-label-md text-label-md text-tertiary-fixed font-semibold">0</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded py-1 px-0.5">
+<span class="font-label-sm text-label-sm text-outline block">RATE</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">1.0 Hz</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded py-1 px-0.5">
+<span class="font-label-sm text-label-sm text-outline block">RSSI</span>
+<span class="font-label-md text-label-md text-primary-container font-semibold">-64 dBm</span>
+</div>
+<div class="bg-surface-container-lowest/80 rounded py-1 px-0.5">
+<span class="font-label-sm text-label-sm text-outline block">RTT</span>
+<span class="font-label-md text-label-md text-tertiary-fixed font-semibold">12ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 1: Environmental Telemetry (DHT11 & BMP280) -->
+<div class="bg-surface-container-low rounded-xl p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">thermostat</span>
+<span class="font-headline-sm text-headline-sm text-primary">ENV SENSORS</span>
+<span class="font-label-sm text-label-sm bg-surface-container px-1 rounded text-outline">[DHT11 • BMP280]</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary-fixed bg-tertiary/10 px-1.5 py-0.5 rounded">CALIBRATED</span>
+</div>
+<!-- 2x2 Grid for Micro Instruments -->
+<div class="grid grid-cols-2 gap-space-xs">
+<!-- Temperature Card -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">TEMP (DHT11)</span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed bg-tertiary/15 px-1 rounded">15°-35°</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-primary-container" id="temp-val">26.4</span>
+<span class="font-label-md text-label-md text-on-surface-variant">°C</span>
+</div>
+<!-- Sparkline SVG -->
+<div class="w-full h-6 pt-1">
+<svg class="w-full h-full text-primary-container" fill="none" viewbox="0 0 100 24">
+<path d="M0,18 L15,16 L30,19 L45,12 L60,14 L75,9 L90,11 L100,7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<circle class="fill-primary-container animate-ping" cx="100" cy="7" r="2.5"></circle>
+</svg>
+</div>
+</div>
+<!-- Humidity Card -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">HUMIDITY</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">RH %</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-primary" id="hum-val">54.2</span>
+<span class="font-label-md text-label-md text-on-surface-variant">%</span>
+</div>
+<!-- Segmented Level Meter -->
+<div class="w-full bg-surface-container-lowest rounded-sm h-3 p-0.5 flex gap-0.5 items-center">
+<div class="h-full w-[54%] bg-primary-container rounded-sm shadow-[0_0_6px_rgba(0,240,255,0.4)]"></div>
+<div class="h-full flex-1 bg-surface-variant rounded-sm"></div>
+</div>
+</div>
+<!-- Barometric Pressure Card -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">PRESSURE</span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">trending_up</span>+0.2
+          </span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-on-surface" id="press-val">1011.3</span>
+<span class="font-label-md text-label-md text-on-surface-variant">hPa</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">BMP280 MSL STABLE</span>
+</div>
+<!-- Altitude (AGL) Card -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between shadow-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">EST. ALT (AGL)</span>
+<span class="material-symbols-outlined text-outline text-[14px]">height</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-primary-fixed-dim" id="alt-val">142.8</span>
+<span class="font-label-md text-label-md text-on-surface-variant">m</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">REL. LAUNCH DATUM</span>
+</div>
+</div>
+</div>
+<!-- SECTION 2: Motion & Inertial (MPU6050) -->
+<div class="bg-surface-container-low rounded-xl p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">screen_rotation</span>
+<span class="font-headline-sm text-headline-sm text-secondary">INERTIAL IMU</span>
+<span class="font-label-sm text-label-sm bg-surface-container px-1 rounded text-outline">[MPU6050]</span>
+</div>
+<div class="flex items-center gap-1 bg-tertiary-container/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed font-semibold">STATIONARY</span>
+</div>
+</div>
+<!-- Accelerometer 3-Axis Readout & Vector Bars -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col gap-1.5">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-outline">3-AXIS ACCELERATION (m/s²)</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">1G REF</span>
+</div>
+<!-- X Axis -->
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-outline w-4">X</span>
+<div class="flex-1 bg-surface-container-lowest h-2 rounded-sm overflow-hidden flex">
+<div class="w-1/2 flex justify-end"><div class="h-full w-[3%] bg-primary-container"></div></div>
+<div class="w-1/2"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface w-16 text-right font-semibold">+0.03</span>
+</div>
+<!-- Y Axis -->
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-outline w-4">Y</span>
+<div class="flex-1 bg-surface-container-lowest h-2 rounded-sm overflow-hidden flex">
+<div class="w-1/2 flex justify-end"><div class="h-full w-[2%] bg-secondary"></div></div>
+<div class="w-1/2"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface w-16 text-right font-semibold">-0.02</span>
+</div>
+<!-- Z Axis -->
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-outline w-4">Z</span>
+<div class="flex-1 bg-surface-container-lowest h-2 rounded-sm overflow-hidden flex">
+<div class="w-1/2"></div>
+<div class="w-1/2 flex justify-start"><div class="h-full w-[98%] bg-tertiary-fixed shadow-[0_0_6px_rgba(52,248,133,0.5)]"></div></div>
+</div>
+<span class="font-label-md text-label-md text-tertiary-fixed w-16 text-right font-semibold">+9.81</span>
+</div>
+</div>
+<!-- Gyroscope Velocity & Calibration Row -->
+<div class="grid grid-cols-3 gap-1">
+<div class="bg-surface-container rounded-lg p-space-xs text-center">
+<span class="font-label-sm text-label-sm text-outline block">GYRO X</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">+0.12°/s</span>
+</div>
+<div class="bg-surface-container rounded-lg p-space-xs text-center">
+<span class="font-label-sm text-label-sm text-outline block">GYRO Y</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">-0.05°/s</span>
+</div>
+<div class="bg-surface-container rounded-lg p-space-xs text-center">
+<span class="font-label-sm text-label-sm text-outline block">GYRO Z</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">+0.01°/s</span>
+</div>
+</div>
+<!-- IMU Controls -->
+<div class="flex gap-space-xs pt-0.5">
+<button class="flex-1 bg-surface-container hover:bg-surface-container-high py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95" id="btn-calibrate-imu">
+<span class="material-symbols-outlined text-[16px] text-primary">adjust</span>
+<span class="font-label-md text-label-md text-primary font-semibold">CALIBRATE ZERO</span>
+</button>
+<button class="flex-1 bg-surface-container hover:bg-surface-container-high py-1.5 rounded-lg flex items-center justify-center gap-1 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">check_circle</span>
+<span class="font-label-md text-label-md text-on-surface-variant">ACK ALERTS</span>
+</button>
+</div>
+</div>
+<!-- SECTION 3: GPS & Ground Tracking (NEO-6M) -->
+<div class="bg-surface-container-low rounded-xl p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-[18px]">location_searching</span>
+<span class="font-headline-sm text-headline-sm text-primary">GNSS ORBIT / FIX</span>
+<span class="font-label-sm text-label-sm bg-surface-container px-1 rounded text-outline">[NEO-6M]</span>
+</div>
+<div class="flex items-center gap-1 bg-tertiary/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed font-semibold">3D FIX (8 SATS)</span>
+</div>
+</div>
+<!-- Map Imagery Viewport -->
+<div class="relative w-full h-32 rounded-lg overflow-hidden bg-surface-container-lowest">
+<div class="w-full h-full bg-cover bg-center" data-location="MMMUT Gorakhpur, Uttar Pradesh, India" style=""></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<!-- Overlay Reticle & Coordinates -->
+<div class="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-surface-container-lowest/80 backdrop-blur-md px-2 py-1 rounded">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary-container font-semibold">26.7314° N, 83.4331° E</span>
+<span class="font-label-sm text-label-sm text-outline">MMMUT GORAKHPUR GROUND STATION</span>
+</div>
+<div class="flex items-center gap-1 bg-primary/10 px-1.5 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px] text-primary">navigation</span>
+<span class="font-label-sm text-label-sm text-primary">102.4m MSL</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between bg-surface-container rounded-lg px-space-xs py-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-outline text-[14px]">schedule</span>
+<span class="font-label-sm text-label-sm text-outline">UTC TIME:</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="utc-clock">11:42:19Z</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-outline text-[14px]">speed</span>
+<span class="font-label-sm text-label-sm text-outline">GROUND SPD:</span>
+<span class="font-label-md text-label-md text-primary font-semibold">0.0 km/h</span>
+</div>
+</div>
+</div>
+<!-- SECTION 4: Power Bus & System Health -->
+<div class="bg-surface-container-low rounded-xl p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary-fixed text-[18px]">bolt</span>
+<span class="font-headline-sm text-headline-sm text-tertiary-fixed">EPS &amp; SYSTEM HEALTH</span>
+<span class="font-label-sm text-label-sm bg-surface-container px-1 rounded text-outline">[1S LiPo]</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary-fixed font-semibold">STATE: CHARGED</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<!-- Bus Voltage & SoC Gauge -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">BUS VOLTAGE</span>
+<span class="font-label-sm text-label-sm text-primary-container font-semibold">84%</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-on-surface" id="bus-volts">3.84</span>
+<span class="font-label-md text-label-md text-on-surface-variant">V</span>
+</div>
+<!-- Segmented 5-Bar Battery Indicator -->
+<div class="flex gap-1 h-2">
+<div class="flex-1 rounded-sm bg-tertiary-fixed shadow-[0_0_4px_rgba(52,248,133,0.4)]"></div>
+<div class="flex-1 rounded-sm bg-tertiary-fixed shadow-[0_0_4px_rgba(52,248,133,0.4)]"></div>
+<div class="flex-1 rounded-sm bg-tertiary-fixed shadow-[0_0_4px_rgba(52,248,133,0.4)]"></div>
+<div class="flex-1 rounded-sm bg-tertiary-fixed shadow-[0_0_4px_rgba(52,248,133,0.4)]"></div>
+<div class="flex-1 rounded-sm bg-surface-variant"></div>
+</div>
+</div>
+<!-- MCU Heap & Health -->
+<div class="bg-surface-container rounded-lg p-space-xs flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-outline">FREE HEAP (ESP32)</span>
+<span class="material-symbols-outlined text-[14px] text-outline">memory</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-telemetry-readout text-telemetry-readout text-primary">184</span>
+<span class="font-label-md text-label-md text-on-surface-variant">KB</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">CPU CORE TEMP</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">41.8°C</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Command & Quick Actions Bar -->
+<div class="grid grid-cols-3 gap-space-xs pt-space-xs pb-space-lg">
+<!-- Pause / Resume Toggle -->
+<button class="bg-surface-container hover:bg-surface-container-high active:scale-95 text-on-surface p-2 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm transition-all" id="btn-toggle-stream">
+<span class="material-symbols-outlined text-primary text-[22px]" id="stream-icon">pause_circle</span>
+<span class="font-label-sm text-label-sm font-semibold" id="stream-label">PAUSE FEED</span>
+</button>
+<!-- CSV Export -->
+<button class="bg-surface-container hover:bg-surface-container-high active:scale-95 text-on-surface p-2 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm transition-all" id="btn-export-csv">
+<span class="material-symbols-outlined text-primary-container text-[22px]">file_download</span>
+<span class="font-label-sm text-label-sm font-semibold">EXPORT CSV</span>
+</button>
+<!-- Clear Buffer -->
+<button class="bg-surface-container hover:bg-surface-container-high active:scale-95 text-error p-2 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm transition-all" id="btn-clear-buffer">
+<span class="material-symbols-outlined text-[22px]">layers_clear</span>
+<span class="font-label-sm text-label-sm font-semibold">CLEAR BUF</span>
+</button>
+</div>
+<!-- Client-Side Micro Interactions & Telemetry Engine Simulation -->
+<script>
+    (() => {
+      let isStreaming = true;
+      let packetCount = 1048;
+      let isConnected = false;
+
+      // Stream Toggle
+      const streamBtn = document.getElementById('btn-toggle-stream');
+      const streamLabel = document.getElementById('stream-label');
+      const streamIcon = document.getElementById('stream-icon');
+
+      streamBtn.addEventListener('click', () => {
+        isStreaming = !isStreaming;
+        if (isStreaming) {
+          streamLabel.textContent = 'PAUSE FEED';
+          streamIcon.textContent = 'pause_circle';
+          streamIcon.className = 'material-symbols-outlined text-primary text-[22px]';
+        } else {
+          streamLabel.textContent = 'RESUME FEED';
+          streamIcon.textContent = 'play_circle';
+          streamIcon.className = 'material-symbols-outlined text-tertiary-fixed text-[22px]';
+        }
+      });
+
+      // Export CSV Trigger Simulation
+      const exportBtn = document.getElementById('btn-export-csv');
+      exportBtn.addEventListener('click', () => {
+        const dummyCsv = "Timestamp,Temp_C,Hum_Pct,Press_hPa,Alt_m,Volts_V\\n" +
+          new Date().toISOString() + ",26.4,54.2,1011.3,142.8,3.84\\n";
+        const blob = new Blob([dummyCsv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ORBITRA_COSMIC1_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+
+      // Clear Buffer Trigger
+      const clearBtn = document.getElementById('btn-clear-buffer');
+      clearBtn.addEventListener('click', () => {
+        packetCount = 0;
+        document.getElementById('stat-pkt').textContent = '0';
+      });
+
+      // Connect Button Interaction
+      const connectBtn = document.getElementById('serial-connect-btn');
+      const btnText = document.getElementById('serial-btn-text');
+      connectBtn.addEventListener('click', () => {
+        isConnected = !isConnected;
+        if (isConnected) {
+          btnText.textContent = 'DISCONNECT';
+          connectBtn.className = 'flex items-center gap-1 bg-error-container text-on-error-container px-2.5 py-1 rounded-lg font-label-md text-label-md font-semibold active:scale-95 transition-all shadow-[0_0_10px_rgba(255,23,68,0.3)]';
+        } else {
+          btnText.textContent = 'CONNECT';
+          connectBtn.className = 'flex items-center gap-1 bg-primary-container text-on-primary-fixed px-2.5 py-1 rounded-lg font-label-md text-label-md font-semibold hover:brightness-110 active:scale-95 transition-all shadow-[0_0_10px_rgba(0,240,255,0.3)]';
+        }
+      });
+
+      // Simulation mode toggling
+      const liveBtn = document.getElementById('mode-live');
+      const simBtn = document.getElementById('mode-sim');
+      liveBtn.addEventListener('click', () => {
+        liveBtn.className = 'font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container text-on-primary-fixed font-semibold transition-all';
+        simBtn.className = 'font-label-sm text-label-sm px-2 py-0.5 rounded text-on-surface-variant hover:text-primary transition-all';
+      });
+      simBtn.addEventListener('click', () => {
+        simBtn.className = 'font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container text-on-primary-fixed font-semibold transition-all';
+        liveBtn.className = 'font-label-sm text-label-sm px-2 py-0.5 rounded text-on-surface-variant hover:text-primary transition-all';
+      });
+
+      // Telemetry Live Micro-Variations
+      setInterval(() => {
+        if (!isStreaming) return;
+        packetCount++;
+        document.getElementById('stat-pkt').textContent = packetCount.toLocaleString();
+
+        // Jitter subtle telemetry values
+        const temp = (26.3 + (Math.random() * 0.3)).toFixed(1);
+        const hum = (54.0 + (Math.random() * 0.4)).toFixed(1);
+        const press = (1011.2 + (Math.random() * 0.3)).toFixed(1);
+        const alt = (142.6 + (Math.random() * 0.5)).toFixed(1);
+
+        document.getElementById('temp-val').textContent = temp;
+        document.getElementById('hum-val').textContent = hum;
+        document.getElementById('press-val').textContent = press;
+        document.getElementById('alt-val').textContent = alt;
+
+        // UTC Clock
+        const now = new Date();
+        const utcStr = now.toISOString().substring(11, 19) + 'Z';
+        document.getElementById('utc-clock').textContent = utcStr;
+      }, 1000);
+    })();
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)]" data-active-classes="text-primary-container bg-surface-container-high/60"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-lg transition-all text-primary-container bg-surface-container-high/60" data-path="telemetry-overview" href="#"><span class="material-symbols-outlined text-[20px]">speed</span><span class="font-label-sm text-label-sm">Telemetry</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="3d-attitude-&amp;-sensors" href="#"><span class="material-symbols-outlined text-[20px]">view_in_ar</span><span class="font-label-sm text-label-sm">Attitude</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="live-charts" href="#"><span class="material-symbols-outlined text-[20px]">monitoring</span><span class="font-label-sm text-label-sm">Charts</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="gps-tracking" href="#"><span class="material-symbols-outlined text-[20px]">satellite_alt</span><span class="font-label-sm text-label-sm">Orbit GPS</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-path="event-&amp;-serial-console" href="#"><span class="material-symbols-outlined text-[20px]">terminal</span><span class="font-label-sm text-label-sm">Console</span></a></div></nav></body></html>

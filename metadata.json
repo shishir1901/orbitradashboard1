@@ -1,0 +1,8 @@
+{
+  "name": "ORBITRA GS-01 Aerospace Mission Control",
+  "description": "High-fidelity aerospace ground station telemetry console for the COSMIC-1 CubeSat mission at MMMUT Gorakhpur, featuring live avionics telemetry, 3D attitude inspection, charts, orbit tracking, and serial uplink.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
