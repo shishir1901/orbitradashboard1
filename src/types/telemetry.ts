@@ -70,4 +70,30 @@ export interface SatellitePass {
   azimuthLos: number; // deg
   status: 'UPCOMING' | 'ACTIVE' | 'PASSED';
   dopplerShiftKhz: number;
+}export interface LiveFieldsPresent {
+  temp: boolean;
+  hum: boolean;
+  press: boolean;
+  alt: boolean;
+  accel: boolean;
+  gyro: boolean;
+  orientation: boolean;
+  gnss: boolean;
+  eps: boolean;
+  link: boolean;
+}
+
+export interface SerialStatus {
+  isSupported: boolean;
+  isConnected: boolean;
+  isConnecting: boolean;
+  portLabel: string;
+  baudRate: number;
+  lastPacketTime: number | null;
+  livePacketCount: number;
+  parseErrorCount: number;
+  lastParseError: string | null;
+  hasReceivedValidJson: boolean;
+  awaitingDataWarning: boolean;
+  error: string | null;
 }

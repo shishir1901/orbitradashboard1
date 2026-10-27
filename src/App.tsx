@@ -17,10 +17,13 @@ import { ConsoleScreen } from './screens/ConsoleScreen';
 import { EmergencyModal } from './components/EmergencyModal';
 import { OperatorModal } from './components/OperatorModal';
 
+import { ProtocolModal } from './components/ProtocolModal';
+
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [emergencyModalOpen, setEmergencyModalOpen] = useState<boolean>(false);
   const [operatorModalOpen, setOperatorModalOpen] = useState<boolean>(false);
+  const [protocolModalOpen, setProtocolModalOpen] = useState<boolean>(false);
 
   return (
     <TelemetryProvider>
@@ -31,6 +34,7 @@ export default function App() {
           onTabChange={setCurrentTab}
           onOpenEmergencyModal={() => setEmergencyModalOpen(true)}
           onOpenOperatorModal={() => setOperatorModalOpen(true)}
+          onOpenProtocolModal={() => setProtocolModalOpen(true)}
         />
 
         {/* Main Mission Viewport */}
@@ -57,6 +61,10 @@ export default function App() {
         <OperatorModal
           isOpen={operatorModalOpen}
           onClose={() => setOperatorModalOpen(false)}
+        />
+        <ProtocolModal
+          isOpen={protocolModalOpen}
+          onClose={() => setProtocolModalOpen(false)}
         />
       </div>
     </TelemetryProvider>

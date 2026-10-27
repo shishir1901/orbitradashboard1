@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { useTelemetry } from '../context/TelemetryContext';
 
 export function AttitudeScreen() {
-  const { currentPacket, calibrateZero, isCalibrating } = useTelemetry();
+  const { currentPacket, calibrateZero, isCalibrating, mode, liveFieldsPresent } = useTelemetry();
   const mountRef = useRef<HTMLDivElement>(null);
 
   const [wireframe, setWireframe] = useState<boolean>(false);
@@ -461,9 +461,21 @@ export function AttitudeScreen() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 bg-[#34D399]/10 border border-[#34D399]/20 px-2.5 py-1 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#34D399]" />
-          <span className="font-mono text-[10px] text-[#34D399] font-medium">MPU6050 6-DOF</span>
+        <div className={`flex items-center gap-1.5 border px-2.5 py-1 rounded-full ${
+          mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+            ? 'bg-[#FBBF24]/10 border-[#FBBF24]/20 text-[#FBBF24]'
+            : 'bg-[#34D399]/10 border-[#34D399]/20 text-[#34D399]'
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${
+            mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+              ? 'bg-[#FBBF24]'
+              : 'bg-[#34D399]'
+          }`} />
+          <span className="font-mono text-[10px] font-medium">
+            {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+              ? 'AWAITING MPU6050'
+              : 'MPU6050 6-DOF'}
+          </span>
         </div>
       </div>
 
@@ -513,7 +525,9 @@ export function AttitudeScreen() {
             <div>
               <span className="text-[#8B9BB4] text-[8px] block">PITCH</span>
               <span className="text-[#22D3EE] font-bold">
-                {currentPacket.orientation.pitch >= 0
+                {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                  ? '--'
+                  : currentPacket.orientation.pitch >= 0
                   ? `+${currentPacket.orientation.pitch.toFixed(1)}°`
                   : `${currentPacket.orientation.pitch.toFixed(1)}°`}
               </span>
@@ -521,7 +535,9 @@ export function AttitudeScreen() {
             <div>
               <span className="text-[#8B9BB4] text-[8px] block">ROLL</span>
               <span className="text-[#A78BFA] font-bold">
-                {currentPacket.orientation.roll >= 0
+                {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                  ? '--'
+                  : currentPacket.orientation.roll >= 0
                   ? `+${currentPacket.orientation.roll.toFixed(1)}°`
                   : `${currentPacket.orientation.roll.toFixed(1)}°`}
               </span>
@@ -529,7 +545,9 @@ export function AttitudeScreen() {
             <div>
               <span className="text-[#8B9BB4] text-[8px] block">YAW</span>
               <span className="text-[#34D399] font-bold">
-                {currentPacket.orientation.yaw.toFixed(1)}°
+                {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                  ? '--'
+                  : `${currentPacket.orientation.yaw.toFixed(1)}°`}
               </span>
             </div>
           </div>

@@ -18,12 +18,21 @@ interface SatellitePass {
 }
 
 export function OrbitScreen() {
-  const { currentPacket } = useTelemetry();
+  const { currentPacket, mode, liveFieldsPresent } = useTelemetry();
   const [subSat, setSubSat] = useState({ lat: 26.73, lng: 83.43 });
   const [orbitTime, setOrbitTime] = useState(0);
 
-  // Animate satellite position along 51.6° inclination LEO ground track
+  // When live GNSS telemetry is present, track actual coordinates
   useEffect(() => {
+    if (mode === 'LIVE' && liveFieldsPresent.gnss) {
+      setSubSat({
+        lat: currentPacket.gnss.lat,
+        lng: currentPacket.gnss.lng,
+      });
+      return;
+    }
+
+    // Otherwise animate satellite position along 51.6° inclination LEO ground track (simulation)
     const timer = setInterval(() => {
       setOrbitTime((t) => t + 1);
       // Orbit model: period = 92.8 minutes
@@ -42,7 +51,7 @@ export function OrbitScreen() {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [mode, liveFieldsPresent.gnss, currentPacket.gnss.lat, currentPacket.gnss.lng]);
 
   const passes: SatellitePass[] = [
     {

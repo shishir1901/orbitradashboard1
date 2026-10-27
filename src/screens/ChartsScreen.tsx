@@ -437,6 +437,12 @@ export function ChartsScreen() {
                   )}
                 </svg>
 
+                {windowedHistory.length < 2 && (
+                  <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] text-[#8B9BB4]/60 pointer-events-none">
+                    {windowedHistory.length === 0 ? 'Awaiting telemetry packets...' : '1 sample received (streaming...)'}
+                  </div>
+                )}
+
                 {/* Hover Tooltip Timestamp Tag */}
                 {hoverIndex !== null && activeHoverPacket && (
                   <div

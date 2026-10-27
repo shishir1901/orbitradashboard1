@@ -11,11 +11,20 @@ export function TelemetryScreen() {
     currentPacket,
     history,
     isConnected,
+    isSerialConnected,
+    isConnecting,
+    liveFieldsPresent,
+    lastPacketTime,
+    livePacketCount,
+    parseErrorCount,
     isStreaming,
     mode,
     setMode,
+    baudRate,
+    port,
+    connectSerial,
+    disconnectSerial,
     toggleStreaming,
-    toggleConnection,
     calibrateZero,
     ackAlerts,
     clearBuffer,
@@ -40,11 +49,12 @@ export function TelemetryScreen() {
     if (recent.length < 2) {
       return '0,18 15,16 30,19 45,12 60,14 75,9 90,11 100,7';
     }
-    const min = 24.5;
-    const max = 28.5;
+    const temps = recent.map((r) => r.temp);
+    const min = Math.min(...temps) - 0.2;
+    const max = Math.max(...temps) + 0.2;
     const pts = recent.map((item, idx) => {
       const x = (idx / (recent.length - 1)) * 100;
-      const normalized = Math.max(0, Math.min(1, (item.temp - min) / (max - min)));
+      const normalized = Math.max(0, Math.min(1, (item.temp - min) / (max - min || 1)));
       const y = 22 - normalized * 18;
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     });
@@ -78,7 +88,7 @@ export function TelemetryScreen() {
           <div className="flex items-center gap-1.5 bg-[#34D399]/10 border border-[#34D399]/30 px-3 py-1 rounded-full shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#34D399] shadow-[0_0_6px_#34D399]" />
             <span className="font-mono text-[10px] text-[#34D399] font-bold tracking-wider">
-              NOMINAL ORBIT
+              {isSerialConnected ? 'WEB SERIAL ACTIVE' : 'NOMINAL SIM'}
             </span>
           </div>
         </div>
@@ -88,8 +98,8 @@ export function TelemetryScreen() {
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-[#8B9BB4] text-[16px]">usb</span>
-              <span className="font-mono text-[11px] text-[#22D3EE] font-medium">/dev/ttyUSB0</span>
-              <span className="font-mono text-[10px] text-[#8B9BB4]">(ESP32 GS)</span>
+              <span className="font-mono text-[11px] text-[#22D3EE] font-medium">{port}</span>
+              <span className="font-mono text-[10px] text-[#8B9BB4]">@{baudRate} BAUD</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -116,18 +126,22 @@ export function TelemetryScreen() {
                 </button>
               </div>
 
+              {/* Working Connect / Disconnect button */}
               <button
-                onClick={toggleConnection}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-[11px] font-bold transition-all ${
-                  isConnected
-                    ? 'bg-[#22D3EE] hover:bg-[#06B6D4] text-[#0A1020] shadow-[0_0_10px_rgba(34,211,238,0.3)]'
-                    : 'bg-[#F43F5E] hover:bg-[#E11D48] text-white'
+                onClick={isSerialConnected ? disconnectSerial : connectSerial}
+                disabled={isConnecting}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-[11px] font-bold transition-all shadow-sm ${
+                  isSerialConnected
+                    ? 'bg-[#F43F5E] hover:bg-[#E11D48] text-white'
+                    : 'bg-[#22D3EE] hover:bg-[#06B6D4] text-[#0A1020] shadow-[0_0_10px_rgba(34,211,238,0.3)]'
                 }`}
               >
                 <span className="material-symbols-outlined text-[15px]">
-                  {isConnected ? 'sensors' : 'sensors_off'}
+                  {isSerialConnected ? 'link_off' : 'usb'}
                 </span>
-                <span>{isConnected ? 'CONNECTED' : 'DISCONNECTED'}</span>
+                <span>
+                  {isConnecting ? 'CONNECTING...' : isSerialConnected ? 'DISCONNECT' : 'CONNECT GROUND STATION'}
+                </span>
               </button>
             </div>
           </div>
@@ -136,11 +150,15 @@ export function TelemetryScreen() {
           <div className="grid grid-cols-5 gap-1.5 pt-1 text-center font-mono">
             <div className="bg-[#111A2B] border border-[#1E2A3F] rounded py-1.5 px-1">
               <span className="text-[9px] text-[#8B9BB4] block">PKTS</span>
-              <span className="text-[12px] text-white font-bold">{currentPacket.packetId.toLocaleString()}</span>
+              <span className="text-[12px] text-white font-bold">
+                {mode === 'LIVE' ? livePacketCount : currentPacket.packetId.toLocaleString()}
+              </span>
             </div>
             <div className="bg-[#111A2B] border border-[#1E2A3F] rounded py-1.5 px-1">
-              <span className="text-[9px] text-[#8B9BB4] block">DROP</span>
-              <span className="text-[12px] text-[#34D399] font-bold">{currentPacket.link.dropCount}</span>
+              <span className="text-[9px] text-[#8B9BB4] block">PARSE ERR</span>
+              <span className={`text-[12px] font-bold ${parseErrorCount > 0 ? 'text-[#F43F5E]' : 'text-[#34D399]'}`}>
+                {parseErrorCount}
+              </span>
             </div>
             <div className="bg-[#111A2B] border border-[#1E2A3F] rounded py-1.5 px-1">
               <span className="text-[9px] text-[#8B9BB4] block">RATE</span>
@@ -148,11 +166,15 @@ export function TelemetryScreen() {
             </div>
             <div className="bg-[#111A2B] border border-[#1E2A3F] rounded py-1.5 px-1">
               <span className="text-[9px] text-[#8B9BB4] block">RSSI</span>
-              <span className="text-[12px] text-[#22D3EE] font-bold">{currentPacket.link.rssi} dBm</span>
+              <span className="text-[12px] text-[#22D3EE] font-bold">
+                {mode === 'LIVE' && !liveFieldsPresent.link ? '--' : `${currentPacket.link.rssi} dBm`}
+              </span>
             </div>
             <div className="bg-[#111A2B] border border-[#1E2A3F] rounded py-1.5 px-1">
-              <span className="text-[9px] text-[#8B9BB4] block">RTT</span>
-              <span className="text-[12px] text-[#34D399] font-bold">{currentPacket.link.rtt}ms</span>
+              <span className="text-[9px] text-[#8B9BB4] block">LAST PKT</span>
+              <span className="text-[12px] text-[#34D399] font-bold">
+                {lastPacketTime ? `${Math.max(0, Math.round((Date.now() - lastPacketTime) / 1000))}s ago` : '--'}
+              </span>
             </div>
           </div>
         </div>
@@ -167,8 +189,12 @@ export function TelemetryScreen() {
               ENVIRONMENTAL AVIONICS [DHT11 • BMP280]
             </span>
           </div>
-          <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-2 py-0.5 rounded-full font-medium">
-            CALIBRATED
+          <span className={`font-mono text-[9px] border px-2 py-0.5 rounded-full font-medium ${
+            mode === 'LIVE' && !liveFieldsPresent.temp
+              ? 'bg-[#FBBF24]/10 text-[#FBBF24] border-[#FBBF24]/20'
+              : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+          }`}>
+            {mode === 'LIVE' && !liveFieldsPresent.temp ? 'AWAITING JSON' : 'CALIBRATED'}
           </span>
         </div>
 
@@ -181,14 +207,18 @@ export function TelemetryScreen() {
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.temp.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.temp ? '--' : currentPacket.temp.toFixed(1)}
               </span>
               <span className="text-[#8B9BB4] text-sm">°C</span>
             </div>
             <div className="w-full h-5">
-              <svg className="w-full h-full text-[#22D3EE]" fill="none" viewBox="0 0 100 24">
-                <path d={`M ${sparklinePoints}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              {mode === 'LIVE' && !liveFieldsPresent.temp ? (
+                <div className="w-full h-[1px] bg-[#1E2A3F] mt-2.5" />
+              ) : (
+                <svg className="w-full h-full text-[#22D3EE]" fill="none" viewBox="0 0 100 24">
+                  <path d={`M ${sparklinePoints}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
             </div>
           </div>
 
@@ -200,14 +230,19 @@ export function TelemetryScreen() {
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.hum.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.hum ? '--' : currentPacket.hum.toFixed(1)}
               </span>
               <span className="text-[#8B9BB4] text-sm">%</span>
             </div>
             <div className="w-full bg-[#111A2B] h-1.5 rounded-full overflow-hidden border border-[#1E2A3F]">
               <div
                 className="h-full bg-[#22D3EE] rounded-full transition-all"
-                style={{ width: `${Math.min(100, Math.max(5, currentPacket.hum))}%` }}
+                style={{
+                  width:
+                    mode === 'LIVE' && !liveFieldsPresent.hum
+                      ? '0%'
+                      : `${Math.min(100, Math.max(5, currentPacket.hum))}%`,
+                }}
               />
             </div>
           </div>
@@ -217,16 +252,16 @@ export function TelemetryScreen() {
             <div className="flex justify-between items-start">
               <span className="font-mono text-[10px] text-[#8B9BB4]">PRESSURE</span>
               <span className="font-mono text-[9px] text-[#A78BFA] flex items-center gap-0.5">
-                <span className="material-symbols-outlined text-[11px]">trending_up</span>+0.2
+                <span className="material-symbols-outlined text-[11px]">compress</span>hPa
               </span>
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.press.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.press ? '--' : currentPacket.press.toFixed(1)}
               </span>
               <span className="text-[#A78BFA] text-sm">hPa</span>
             </div>
-            <span className="font-mono text-[9px] text-[#8B9BB4]">BMP280 MSL STABLE</span>
+            <span className="font-mono text-[9px] text-[#8B9BB4]">BMP280 MSL</span>
           </div>
 
           {/* Altitude AGL */}
@@ -237,11 +272,13 @@ export function TelemetryScreen() {
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.altAgl.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.alt ? '--' : currentPacket.altAgl.toFixed(1)}
               </span>
               <span className="text-[#34D399] text-sm">m</span>
             </div>
-            <span className="font-mono text-[9px] text-[#8B9BB4]">REL LAUNCH DATUM</span>
+            <span className="font-mono text-[9px] text-[#8B9BB4]">
+              {mode === 'LIVE' && !liveFieldsPresent.alt ? 'AWAITING ALT' : 'REL LAUNCH DATUM'}
+            </span>
           </div>
         </div>
       </div>
@@ -255,8 +292,14 @@ export function TelemetryScreen() {
               INERTIAL IMU [MPU6050]
             </span>
           </div>
-          <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-2 py-0.5 rounded-full font-medium">
-            STATIONARY
+          <span className={`font-mono text-[9px] border px-2 py-0.5 rounded-full font-medium ${
+            mode === 'LIVE' && !liveFieldsPresent.accel && !liveFieldsPresent.orientation
+              ? 'bg-[#FBBF24]/10 text-[#FBBF24] border-[#FBBF24]/20'
+              : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+          }`}>
+            {mode === 'LIVE' && !liveFieldsPresent.accel && !liveFieldsPresent.orientation
+              ? 'AWAITING MPU6050'
+              : 'STATIONARY'}
           </span>
         </div>
 
@@ -274,13 +317,22 @@ export function TelemetryScreen() {
               <div className="w-1/2 flex justify-end">
                 <div
                   className="h-full bg-[#22D3EE]"
-                  style={{ width: `${Math.min(100, Math.abs(currentPacket.accel.x) * 12)}%` }}
+                  style={{
+                    width:
+                      mode === 'LIVE' && !liveFieldsPresent.accel
+                        ? '0%'
+                        : `${Math.min(100, Math.abs(currentPacket.accel.x) * 12)}%`,
+                  }}
                 />
               </div>
               <div className="w-1/2" />
             </div>
             <span className="w-16 text-right font-bold text-white">
-              {currentPacket.accel.x >= 0 ? `+${currentPacket.accel.x.toFixed(2)}` : currentPacket.accel.x.toFixed(2)}
+              {mode === 'LIVE' && !liveFieldsPresent.accel
+                ? '--'
+                : currentPacket.accel.x >= 0
+                ? `+${currentPacket.accel.x.toFixed(2)}`
+                : currentPacket.accel.x.toFixed(2)}
             </span>
           </div>
 
@@ -291,13 +343,22 @@ export function TelemetryScreen() {
               <div className="w-1/2 flex justify-end">
                 <div
                   className="h-full bg-[#A78BFA]"
-                  style={{ width: `${Math.min(100, Math.abs(currentPacket.accel.y) * 12)}%` }}
+                  style={{
+                    width:
+                      mode === 'LIVE' && !liveFieldsPresent.accel
+                        ? '0%'
+                        : `${Math.min(100, Math.abs(currentPacket.accel.y) * 12)}%`,
+                  }}
                 />
               </div>
               <div className="w-1/2" />
             </div>
             <span className="w-16 text-right font-bold text-white">
-              {currentPacket.accel.y >= 0 ? `+${currentPacket.accel.y.toFixed(2)}` : currentPacket.accel.y.toFixed(2)}
+              {mode === 'LIVE' && !liveFieldsPresent.accel
+                ? '--'
+                : currentPacket.accel.y >= 0
+                ? `+${currentPacket.accel.y.toFixed(2)}`
+                : currentPacket.accel.y.toFixed(2)}
             </span>
           </div>
 
@@ -309,12 +370,21 @@ export function TelemetryScreen() {
               <div className="w-1/2 flex justify-start">
                 <div
                   className="h-full bg-[#34D399]"
-                  style={{ width: `${Math.min(100, (currentPacket.accel.z / 10) * 100)}%` }}
+                  style={{
+                    width:
+                      mode === 'LIVE' && !liveFieldsPresent.accel
+                        ? '0%'
+                        : `${Math.min(100, (currentPacket.accel.z / 10) * 100)}%`,
+                  }}
                 />
               </div>
             </div>
             <span className="w-16 text-right font-bold text-[#34D399]">
-              {currentPacket.accel.z >= 0 ? `+${currentPacket.accel.z.toFixed(2)}` : currentPacket.accel.z.toFixed(2)}
+              {mode === 'LIVE' && !liveFieldsPresent.accel
+                ? '--'
+                : currentPacket.accel.z >= 0
+                ? `+${currentPacket.accel.z.toFixed(2)}`
+                : currentPacket.accel.z.toFixed(2)}
             </span>
           </div>
         </div>
@@ -324,19 +394,31 @@ export function TelemetryScreen() {
           <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-2.5 text-center">
             <span className="text-[9px] text-[#8B9BB4] block">GYRO X</span>
             <span className="text-[13px] text-white font-bold">
-              {currentPacket.gyro.x >= 0 ? `+${currentPacket.gyro.x.toFixed(2)}` : currentPacket.gyro.x.toFixed(2)}°/s
+              {mode === 'LIVE' && !liveFieldsPresent.gyro
+                ? '--'
+                : currentPacket.gyro.x >= 0
+                ? `+${currentPacket.gyro.x.toFixed(2)}`
+                : currentPacket.gyro.x.toFixed(2)}°/s
             </span>
           </div>
           <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-2.5 text-center">
             <span className="text-[9px] text-[#8B9BB4] block">GYRO Y</span>
             <span className="text-[13px] text-white font-bold">
-              {currentPacket.gyro.y >= 0 ? `+${currentPacket.gyro.y.toFixed(2)}` : currentPacket.gyro.y.toFixed(2)}°/s
+              {mode === 'LIVE' && !liveFieldsPresent.gyro
+                ? '--'
+                : currentPacket.gyro.y >= 0
+                ? `+${currentPacket.gyro.y.toFixed(2)}`
+                : currentPacket.gyro.y.toFixed(2)}°/s
             </span>
           </div>
           <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-2.5 text-center">
             <span className="text-[9px] text-[#8B9BB4] block">GYRO Z</span>
             <span className="text-[13px] text-white font-bold">
-              {currentPacket.gyro.z >= 0 ? `+${currentPacket.gyro.z.toFixed(2)}` : currentPacket.gyro.z.toFixed(2)}°/s
+              {mode === 'LIVE' && !liveFieldsPresent.gyro
+                ? '--'
+                : currentPacket.gyro.z >= 0
+                ? `+${currentPacket.gyro.z.toFixed(2)}`
+                : currentPacket.gyro.z.toFixed(2)}°/s
             </span>
           </div>
         </div>
@@ -371,18 +453,22 @@ export function TelemetryScreen() {
               EPS & SYSTEM HEALTH [1S LiPo]
             </span>
           </div>
-          <span className="font-mono text-[9px] text-[#34D399] font-medium">STATE: CHARGED</span>
+          <span className="font-mono text-[9px] text-[#34D399] font-medium">
+            {mode === 'LIVE' && !liveFieldsPresent.eps ? 'NO EPS DATA' : 'STATE: CHARGED'}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-3 flex flex-col justify-between">
             <div className="flex justify-between items-start font-mono text-[10px]">
               <span className="text-[#8B9BB4]">BUS VOLTAGE</span>
-              <span className="text-[#34D399] font-bold">{currentPacket.eps.soc}%</span>
+              <span className="text-[#34D399] font-bold">
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? '--%' : `${currentPacket.eps.soc}%`}
+              </span>
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.eps.voltage.toFixed(2)}
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? '--' : currentPacket.eps.voltage.toFixed(2)}
               </span>
               <span className="text-[#8B9BB4] text-sm font-normal">V</span>
             </div>
@@ -391,7 +477,11 @@ export function TelemetryScreen() {
                 <div
                   key={idx}
                   className={`flex-1 rounded-sm ${
-                    currentPacket.eps.soc >= idx * 18 ? 'bg-[#34D399]' : 'bg-[#1E2A3F]'
+                    mode === 'LIVE' && !liveFieldsPresent.eps
+                      ? 'bg-[#1E2A3F]'
+                      : currentPacket.eps.soc >= idx * 18
+                      ? 'bg-[#34D399]'
+                      : 'bg-[#1E2A3F]'
                   }`}
                 />
               ))}
@@ -405,13 +495,15 @@ export function TelemetryScreen() {
             </div>
             <div className="flex items-baseline gap-1.5 my-2">
               <span className="font-mono text-[38px] font-light text-white leading-none">
-                {currentPacket.eps.freeHeap}
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? '--' : currentPacket.eps.freeHeap}
               </span>
               <span className="text-[#8B9BB4] text-sm font-normal">KB</span>
             </div>
             <div className="flex justify-between text-[10px] font-mono text-[#8B9BB4]">
               <span>CPU CORE TEMP</span>
-              <span className="text-white font-medium">{currentPacket.eps.cpuTemp.toFixed(1)}°C</span>
+              <span className="text-white font-medium">
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? '--' : `${currentPacket.eps.cpuTemp.toFixed(1)}°C`}
+              </span>
             </div>
           </div>
         </div>

@@ -12,9 +12,17 @@ export function DashboardScreen() {
     currentPacket,
     history,
     isConnected,
+    isSerialConnected,
     isStreaming,
+    mode,
+    liveFieldsPresent,
+    lastPacketTime,
+    livePacketCount,
+    parseErrorCount,
     toggleStreaming,
     toggleConnection,
+    connectSerial,
+    disconnectSerial,
     calibrateZero,
     ackAlerts,
     clearBuffer,
@@ -326,27 +334,43 @@ export function DashboardScreen() {
                   TEMPERATURE
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-1.5 py-0.5 rounded-full font-medium">
-                NOMINAL
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.temp
+                  ? 'bg-[#FBBF24]/10 text-[#FBBF24] border-[#FBBF24]/20'
+                  : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.temp ? 'AWAITING' : 'NOMINAL'}
               </span>
             </div>
 
             <div className="flex items-baseline gap-2 my-2">
               <span className="font-mono text-[38px] font-light text-white tracking-tight leading-none">
-                {currentPacket.temp.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.temp ? '--' : currentPacket.temp.toFixed(1)}
               </span>
               <span className="text-[#8B9BB4] text-sm font-normal">°C</span>
             </div>
 
             {/* Min/Max and Thin Sparkline in Cyan */}
             <div className="flex items-center justify-between text-[10px] font-mono text-[#8B9BB4] pt-1">
-              <span>MIN: {sensorStats.temp.min.toFixed(1)}°</span>
-              <span>MAX: {sensorStats.temp.max.toFixed(1)}°</span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.temp
+                  ? 'KEY: "temperature_c"'
+                  : `MIN: ${sensorStats.temp.min.toFixed(1)}°`}
+              </span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.temp
+                  ? ''
+                  : `MAX: ${sensorStats.temp.max.toFixed(1)}°`}
+              </span>
             </div>
             <div className="w-full h-5 mt-1">
-              <svg className="w-full h-full text-[#22D3EE]" fill="none" viewBox="0 0 100 24">
-                <path d={`M ${tempSparkline}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              {mode === 'LIVE' && !liveFieldsPresent.temp ? (
+                <div className="w-full h-[1px] bg-[#1E2A3F] mt-2.5" />
+              ) : (
+                <svg className="w-full h-full text-[#22D3EE]" fill="none" viewBox="0 0 100 24">
+                  <path d={`M ${tempSparkline}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
             </div>
           </div>
 
@@ -359,27 +383,44 @@ export function DashboardScreen() {
                   HUMIDITY
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#22D3EE]/10 text-[#22D3EE] border border-[#22D3EE]/20 px-1.5 py-0.5 rounded-full font-medium">
-                STABLE
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.hum
+                  ? 'bg-[#FBBF24]/10 text-[#FBBF24] border-[#FBBF24]/20'
+                  : 'bg-[#22D3EE]/10 text-[#22D3EE] border-[#22D3EE]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.hum ? 'AWAITING' : 'STABLE'}
               </span>
             </div>
 
             <div className="flex items-baseline gap-2 my-2">
               <span className="font-mono text-[38px] font-light text-white tracking-tight leading-none">
-                {currentPacket.hum.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.hum ? '--' : currentPacket.hum.toFixed(1)}
               </span>
               <span className="text-[#8B9BB4] text-sm font-normal">% RH</span>
             </div>
 
             <div className="flex items-center justify-between text-[10px] font-mono text-[#8B9BB4] pt-1">
-              <span>MIN: {sensorStats.hum.min.toFixed(1)}%</span>
-              <span>MAX: {sensorStats.hum.max.toFixed(1)}%</span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.hum
+                  ? 'KEY: "humidity_pct"'
+                  : `MIN: ${sensorStats.hum.min.toFixed(1)}%`}
+              </span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.hum
+                  ? ''
+                  : `MAX: ${sensorStats.hum.max.toFixed(1)}%`}
+              </span>
             </div>
             {/* Thin Progress Bar in Cyan */}
             <div className="w-full bg-[#0A1020] h-1.5 rounded-full overflow-hidden mt-1.5 border border-[#1E2A3F]">
               <div
                 className="h-full bg-[#22D3EE] rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, Math.max(5, currentPacket.hum))}%` }}
+                style={{
+                  width:
+                    mode === 'LIVE' && !liveFieldsPresent.hum
+                      ? '0%'
+                      : `${Math.min(100, Math.max(5, currentPacket.hum))}%`,
+                }}
               />
             </div>
           </div>
@@ -393,27 +434,43 @@ export function DashboardScreen() {
                   BAROMETRIC PRESSURE
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#A78BFA]/10 text-[#A78BFA] border border-[#A78BFA]/20 px-1.5 py-0.5 rounded-full font-medium">
-                STABLE
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.press
+                  ? 'bg-[#FBBF24]/10 text-[#FBBF24] border-[#FBBF24]/20'
+                  : 'bg-[#A78BFA]/10 text-[#A78BFA] border-[#A78BFA]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.press ? 'AWAITING' : 'STABLE'}
               </span>
             </div>
 
             <div className="flex items-baseline gap-2 my-2">
               <span className="font-mono text-[38px] font-light text-white tracking-tight leading-none">
-                {currentPacket.press.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.press ? '--' : currentPacket.press.toFixed(1)}
               </span>
               <span className="text-[#A78BFA] text-sm font-normal">hPa</span>
             </div>
 
             <div className="flex items-center justify-between text-[10px] font-mono text-[#8B9BB4] pt-1">
-              <span>MIN: {sensorStats.press.min.toFixed(1)}</span>
-              <span>MAX: {sensorStats.press.max.toFixed(1)}</span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.press
+                  ? 'KEY: "pressure_hpa"'
+                  : `MIN: ${sensorStats.press.min.toFixed(1)}`}
+              </span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.press
+                  ? ''
+                  : `MAX: ${sensorStats.press.max.toFixed(1)}`}
+              </span>
             </div>
             {/* Sparkline in Purple */}
             <div className="w-full h-5 mt-1">
-              <svg className="w-full h-full text-[#A78BFA]" fill="none" viewBox="0 0 100 24">
-                <path d={`M ${pressSparkline}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              {mode === 'LIVE' && !liveFieldsPresent.press ? (
+                <div className="w-full h-[1px] bg-[#1E2A3F] mt-2.5" />
+              ) : (
+                <svg className="w-full h-full text-[#A78BFA]" fill="none" viewBox="0 0 100 24">
+                  <path d={`M ${pressSparkline}`} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
             </div>
           </div>
 
@@ -426,27 +483,44 @@ export function DashboardScreen() {
                   EST. ALTITUDE (AGL)
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-1.5 py-0.5 rounded-full font-medium">
-                DATUM REL
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.alt
+                  ? 'bg-[#8B9BB4]/10 text-[#8B9BB4] border-[#8B9BB4]/20'
+                  : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.alt ? 'OPTIONAL' : 'DATUM REL'}
               </span>
             </div>
 
             <div className="flex items-baseline gap-2 my-2">
               <span className="font-mono text-[38px] font-light text-white tracking-tight leading-none">
-                {currentPacket.altAgl.toFixed(1)}
+                {mode === 'LIVE' && !liveFieldsPresent.alt ? '--' : currentPacket.altAgl.toFixed(1)}
               </span>
               <span className="text-[#34D399] text-sm font-normal">m</span>
             </div>
 
             <div className="flex items-center justify-between text-[10px] font-mono text-[#8B9BB4] pt-1">
-              <span>MIN: {sensorStats.alt.min.toFixed(1)}m</span>
-              <span>MAX: {sensorStats.alt.max.toFixed(1)}m</span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.alt
+                  ? 'KEY: "altitude_m"'
+                  : `MIN: ${sensorStats.alt.min.toFixed(1)}m`}
+              </span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.alt
+                  ? ''
+                  : `MAX: ${sensorStats.alt.max.toFixed(1)}m`}
+              </span>
             </div>
             {/* Thin Progress Bar in Green */}
             <div className="w-full bg-[#0A1020] h-1.5 rounded-full overflow-hidden mt-1.5 border border-[#1E2A3F]">
               <div
                 className="h-full bg-[#34D399] rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, (currentPacket.altAgl / 200) * 100)}%` }}
+                style={{
+                  width:
+                    mode === 'LIVE' && !liveFieldsPresent.alt
+                      ? '0%'
+                      : `${Math.min(100, (currentPacket.altAgl / 200) * 100)}%`,
+                }}
               />
             </div>
           </div>
@@ -466,9 +540,21 @@ export function DashboardScreen() {
                 </span>
                 <span className="font-mono text-[10px] text-[#8B9BB4]">COSMIC-1 (MPU6050)</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-[#34D399]/10 border border-[#34D399]/20 px-2 py-0.5 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#34D399]" />
-                <span className="font-mono text-[9px] text-[#34D399] font-medium">INERTIAL LOCK</span>
+              <div className={`flex items-center gap-1.5 border px-2 py-0.5 rounded-full ${
+                mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                  ? 'bg-[#FBBF24]/10 border-[#FBBF24]/20 text-[#FBBF24]'
+                  : 'bg-[#34D399]/10 border-[#34D399]/20 text-[#34D399]'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                    ? 'bg-[#FBBF24]'
+                    : 'bg-[#34D399]'
+                }`} />
+                <span className="font-mono text-[9px] font-medium">
+                  {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                    ? 'AWAITING MPU6050'
+                    : 'INERTIAL LOCK'}
+                </span>
               </div>
             </div>
 
@@ -496,24 +582,40 @@ export function DashboardScreen() {
                 <div>
                   <span className="text-[#8B9BB4] text-[8px] block">PITCH</span>
                   <span className="text-[#22D3EE] font-medium">
-                    {currentPacket.orientation.pitch >= 0 ? `+${currentPacket.orientation.pitch.toFixed(1)}` : currentPacket.orientation.pitch.toFixed(1)}°
+                    {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                      ? '--'
+                      : currentPacket.orientation.pitch >= 0
+                      ? `+${currentPacket.orientation.pitch.toFixed(1)}°`
+                      : `${currentPacket.orientation.pitch.toFixed(1)}°`}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#8B9BB4] text-[8px] block">ROLL</span>
                   <span className="text-[#A78BFA] font-medium">
-                    {currentPacket.orientation.roll >= 0 ? `+${currentPacket.orientation.roll.toFixed(1)}` : currentPacket.orientation.roll.toFixed(1)}°
+                    {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                      ? '--'
+                      : currentPacket.orientation.roll >= 0
+                      ? `+${currentPacket.orientation.roll.toFixed(1)}°`
+                      : `${currentPacket.orientation.roll.toFixed(1)}°`}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#8B9BB4] text-[8px] block">YAW</span>
-                  <span className="text-[#34D399] font-medium">{currentPacket.orientation.yaw.toFixed(1)}°</span>
+                  <span className="text-[#34D399] font-medium">
+                    {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                      ? '--'
+                      : `${currentPacket.orientation.yaw.toFixed(1)}°`}
+                  </span>
                 </div>
               </div>
 
               {/* Quaternion HUD Pill */}
               <div className="absolute top-3 right-3 bg-[#111A2B]/85 backdrop-blur-md border border-[#1E2A3F] rounded-lg px-2.5 py-1.5 font-mono text-[9px] text-[#8B9BB4] pointer-events-none hidden sm:block">
-                <span>Q: [{currentPacket.quaternion.join(', ')}]</span>
+                <span>
+                  {mode === 'LIVE' && !liveFieldsPresent.orientation && !liveFieldsPresent.accel
+                    ? 'Q: Awaiting IMU'
+                    : `Q: [${currentPacket.quaternion.join(', ')}]`}
+                </span>
               </div>
             </div>
 
@@ -561,8 +663,14 @@ export function DashboardScreen() {
                   GNSS RADAR
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-1.5 py-0.5 rounded-full font-medium">
-                3D FIX (8 SATS)
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.gnss
+                  ? 'bg-[#8B9BB4]/10 text-[#8B9BB4] border-[#8B9BB4]/20'
+                  : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.gnss
+                  ? 'NO FIX (AWAITING)'
+                  : `${currentPacket.gnss.fixType}`}
               </span>
             </div>
 
@@ -586,7 +694,7 @@ export function DashboardScreen() {
                 }}
               />
 
-              {/* Green Target Satellite Dots */}
+              {/* Target Satellite Dots */}
               <div className="absolute top-[28%] left-[35%] w-2 h-2 rounded-full bg-[#34D399] shadow-[0_0_6px_#34D399]" />
               <div className="absolute top-[65%] left-[70%] w-1.5 h-1.5 rounded-full bg-[#34D399] shadow-[0_0_5px_#34D399]" />
               <div className="absolute top-[40%] left-[78%] w-2 h-2 rounded-full bg-[#34D399] shadow-[0_0_6px_#34D399]" />
@@ -599,9 +707,15 @@ export function DashboardScreen() {
             {/* Radar Coordinates Label Tag */}
             <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-2 font-mono text-[10px] text-center">
               <span className="text-[#22D3EE] font-bold block">
-                {currentPacket.gnss.lat.toFixed(4)}° N, {currentPacket.gnss.lng.toFixed(4)}° E
+                {mode === 'LIVE' && !liveFieldsPresent.gnss
+                  ? 'AWAITING GPS TELEMETRY'
+                  : `${currentPacket.gnss.lat.toFixed(4)}° N, ${currentPacket.gnss.lng.toFixed(4)}° E`}
               </span>
-              <span className="text-[#8B9BB4] text-[9px]">MMMUT GORAKHPUR GROUND STATION</span>
+              <span className="text-[#8B9BB4] text-[9px]">
+                {mode === 'LIVE' && !liveFieldsPresent.gnss
+                  ? 'KEYS: "latitude", "longitude"'
+                  : 'MMMUT GORAKHPUR GROUND STATION'}
+              </span>
             </div>
           </div>
 
@@ -614,20 +728,24 @@ export function DashboardScreen() {
                   POWER BUS & BATTERY
                 </span>
               </div>
-              <span className="font-mono text-[9px] bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/20 px-1.5 py-0.5 rounded-full font-medium">
-                CHARGED
+              <span className={`font-mono text-[9px] border px-1.5 py-0.5 rounded-full font-medium ${
+                mode === 'LIVE' && !liveFieldsPresent.eps
+                  ? 'bg-[#8B9BB4]/10 text-[#8B9BB4] border-[#8B9BB4]/20'
+                  : 'bg-[#34D399]/10 text-[#34D399] border-[#34D399]/20'
+              }`}>
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? 'NO SENSOR' : 'CHARGED'}
               </span>
             </div>
 
             <div className="flex items-baseline justify-between my-2">
               <div className="flex items-baseline gap-1.5">
                 <span className="font-mono text-[38px] font-light text-white tracking-tight leading-none">
-                  {currentPacket.eps.voltage.toFixed(2)}
+                  {mode === 'LIVE' && !liveFieldsPresent.eps ? '--' : currentPacket.eps.voltage.toFixed(2)}
                 </span>
                 <span className="text-[#8B9BB4] text-sm">V</span>
               </div>
               <span className="font-mono text-[14px] text-[#34D399] font-medium">
-                {currentPacket.eps.soc}%
+                {mode === 'LIVE' && !liveFieldsPresent.eps ? '--%' : `${currentPacket.eps.soc}%`}
               </span>
             </div>
 
@@ -637,15 +755,27 @@ export function DashboardScreen() {
                 <div
                   key={idx}
                   className={`flex-1 rounded-sm ${
-                    currentPacket.eps.soc >= idx * 18 ? 'bg-[#34D399]' : 'bg-[#1E2A3F]'
+                    mode === 'LIVE' && !liveFieldsPresent.eps
+                      ? 'bg-[#1E2A3F]'
+                      : currentPacket.eps.soc >= idx * 18
+                      ? 'bg-[#34D399]'
+                      : 'bg-[#1E2A3F]'
                   }`}
                 />
               ))}
             </div>
 
             <div className="flex items-center justify-between text-[10px] font-mono text-[#8B9BB4] pt-2">
-              <span>CPU TEMP: {currentPacket.eps.cpuTemp.toFixed(1)}°C</span>
-              <span>FREE HEAP: {currentPacket.eps.freeHeap} KB</span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.eps
+                  ? 'CPU: --'
+                  : `CPU TEMP: ${currentPacket.eps.cpuTemp.toFixed(1)}°C`}
+              </span>
+              <span>
+                {mode === 'LIVE' && !liveFieldsPresent.eps
+                  ? 'HEAP: --'
+                  : `FREE HEAP: ${currentPacket.eps.freeHeap} KB`}
+              </span>
             </div>
           </div>
 
@@ -655,18 +785,57 @@ export function DashboardScreen() {
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[#22D3EE] text-[16px]">tune</span>
                 <span className="font-mono text-[10px] uppercase tracking-wider text-[#8B9BB4] font-semibold">
-                  MISSION COMMANDS
+                  GROUND STATION LINK
                 </span>
               </div>
-              <span className="font-mono text-[9px] text-[#8B9BB4]">ESP32 GS</span>
+              <span className={`font-mono text-[9px] font-bold ${
+                isSerialConnected ? 'text-[#34D399]' : 'text-[#8B9BB4]'
+              }`}>
+                {isSerialConnected ? '115200 BAUD' : 'OFFLINE'}
+              </span>
+            </div>
+
+            {/* Quick Connect / Disconnect button */}
+            <button
+              onClick={isSerialConnected ? disconnectSerial : connectSerial}
+              className={`w-full py-2 rounded-lg font-mono text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm ${
+                isSerialConnected
+                  ? 'bg-[#F43F5E]/15 hover:bg-[#F43F5E]/25 text-[#F43F5E] border border-[#F43F5E]/30'
+                  : 'bg-[#22D3EE] hover:bg-[#06B6D4] text-[#0A1020]'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[15px]">
+                {isSerialConnected ? 'link_off' : 'usb'}
+              </span>
+              <span>{isSerialConnected ? 'DISCONNECT GROUND STATION' : 'CONNECT GROUND STATION'}</span>
+            </button>
+
+            {/* Live Packet & Error Summary */}
+            <div className="bg-[#0A1020] border border-[#1E2A3F] rounded-lg p-2 font-mono text-[10px] flex items-center justify-between text-[#8B9BB4]">
+              <div>
+                <span>PKTS: </span>
+                <span className="text-white font-bold">{livePacketCount}</span>
+              </div>
+              <span>|</span>
+              <div>
+                <span>ERRORS: </span>
+                <span className={parseErrorCount > 0 ? 'text-[#F43F5E] font-bold' : 'text-[#34D399]'}>
+                  {parseErrorCount}
+                </span>
+              </div>
+              <span>|</span>
+              <div>
+                <span>MODE: </span>
+                <span className="text-[#22D3EE] font-bold">{mode}</span>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
               <button
                 onClick={toggleStreaming}
-                className="bg-[#111A2B] hover:bg-[#1E2A3F] border border-[#1E2A3F] text-white py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1"
+                className="bg-[#111A2B] hover:bg-[#1E2A3F] border border-[#1E2A3F] text-white py-1.5 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1"
               >
-                <span className="material-symbols-outlined text-[15px] text-[#22D3EE]">
+                <span className="material-symbols-outlined text-[14px] text-[#22D3EE]">
                   {isStreaming ? 'pause_circle' : 'play_circle'}
                 </span>
                 <span>{isStreaming ? 'PAUSE' : 'RESUME'}</span>
@@ -674,32 +843,10 @@ export function DashboardScreen() {
 
               <button
                 onClick={exportCsv}
-                className="bg-[#111A2B] hover:bg-[#1E2A3F] border border-[#1E2A3F] text-white py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1"
+                className="bg-[#111A2B] hover:bg-[#1E2A3F] border border-[#1E2A3F] text-white py-1.5 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1"
               >
-                <span className="material-symbols-outlined text-[15px] text-[#22D3EE]">download</span>
+                <span className="material-symbols-outlined text-[14px] text-[#22D3EE]">download</span>
                 <span>EXPORT CSV</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 font-mono text-[11px] pt-0.5">
-              <button
-                onClick={ackAlerts}
-                className={`py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 border ${
-                  alertsAcknowledged
-                    ? 'bg-[#34D399]/20 text-[#34D399] border-[#34D399]/40'
-                    : 'bg-[#FBBF24]/15 hover:bg-[#FBBF24]/25 text-[#FBBF24] border-[#FBBF24]/30'
-                }`}
-              >
-                <span className="material-symbols-outlined text-[15px]">check_circle</span>
-                <span>{alertsAcknowledged ? 'ACKED' : 'ACK ALERTS'}</span>
-              </button>
-
-              <button
-                onClick={clearBuffer}
-                className="bg-[#F43F5E]/15 hover:bg-[#F43F5E]/25 text-[#F43F5E] border border-[#F43F5E]/30 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[15px]">layers_clear</span>
-                <span>CLEAR BUF</span>
               </button>
             </div>
           </div>
