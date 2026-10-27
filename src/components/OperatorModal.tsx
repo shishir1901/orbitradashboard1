@@ -9,9 +9,10 @@ import { useTelemetry } from '../context/TelemetryContext';
 interface OperatorModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onReplaySplash?: () => void;
 }
 
-export function OperatorModal({ isOpen, onClose }: OperatorModalProps) {
+export function OperatorModal({ isOpen, onClose, onReplaySplash }: OperatorModalProps) {
   const { port, baudRate, isConnected, mode } = useTelemetry();
 
   if (!isOpen) return null;
@@ -87,12 +88,26 @@ export function OperatorModal({ isOpen, onClose }: OperatorModalProps) {
           </div>
         </div>
 
-        <button
-          onClick={onClose}
-          className="w-full bg-[#22D3EE] hover:bg-[#06B6D4] text-[#0A1020] py-2.5 rounded-lg font-mono text-[11px] font-bold shadow-sm transition-all"
-        >
-          CLOSE OPERATOR CONSOLE
-        </button>
+        <div className="flex gap-2">
+          {onReplaySplash && (
+            <button
+              onClick={() => {
+                onClose();
+                onReplaySplash();
+              }}
+              className="flex-1 bg-[#0A1020] hover:bg-[#1E2A3F] border border-[#22D3EE]/40 text-[#22D3EE] py-2.5 rounded-lg font-mono text-[11px] font-bold shadow-sm transition-all flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[15px]">play_circle</span>
+              <span>REPLAY INTRO</span>
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className={`${onReplaySplash ? 'flex-1' : 'w-full'} bg-[#22D3EE] hover:bg-[#06B6D4] text-[#0A1020] py-2.5 rounded-lg font-mono text-[11px] font-bold shadow-sm transition-all`}
+          >
+            CLOSE CONSOLE
+          </button>
+        </div>
       </div>
     </div>
   );

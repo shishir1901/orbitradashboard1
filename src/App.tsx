@@ -16,14 +16,22 @@ import { OrbitScreen } from './screens/OrbitScreen';
 import { ConsoleScreen } from './screens/ConsoleScreen';
 import { EmergencyModal } from './components/EmergencyModal';
 import { OperatorModal } from './components/OperatorModal';
-
 import { ProtocolModal } from './components/ProtocolModal';
+import { SplashScreen } from './components/SplashScreen';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [emergencyModalOpen, setEmergencyModalOpen] = useState<boolean>(false);
   const [operatorModalOpen, setOperatorModalOpen] = useState<boolean>(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return !sessionStorage.getItem('orbitra_splash_seen');
+    } catch {
+      return false;
+    }
+  });
 
   return (
     <TelemetryProvider>
@@ -61,11 +69,17 @@ export default function App() {
         <OperatorModal
           isOpen={operatorModalOpen}
           onClose={() => setOperatorModalOpen(false)}
+          onReplaySplash={() => setShowSplash(true)}
         />
         <ProtocolModal
           isOpen={protocolModalOpen}
           onClose={() => setProtocolModalOpen(false)}
         />
+
+        {/* Intro Splash Screen (z-index 9999) */}
+        {showSplash && (
+          <SplashScreen onEnter={() => setShowSplash(false)} />
+        )}
       </div>
     </TelemetryProvider>
   );
